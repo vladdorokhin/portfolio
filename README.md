@@ -1,2 +1,2 @@
-# portfolio
-A data analytics portfolio of Vladimir Dorokhin
+# Portfolio
+A data analytics portfolio of Vladimir Dorokhin.
