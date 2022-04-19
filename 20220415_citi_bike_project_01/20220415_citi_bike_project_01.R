@@ -90,5 +90,29 @@ tripdata_clean$ride_distance <- tripdata_clean$ride_distance/1000
 ## Ride peed in km/h
 tripdata_clean$ride_speed = c(tripdata_clean$ride_distance) / as.numeric(c(tripdata_clean$ride_length), units="hours")
 
-# Double-check there will be no values when bikes were taken out of docks and checked for quality by Citi Bike employees or when ride_length was negative:
+# Double-check there will be no values when bikes were taken out of docks and checked for quality by Citi Bike employees or when ride_length was negative
 tripdata_clean <- tripdata_clean[!(tripdata_clean$start_station_name == "HQ QR" | tripdata_clean$ride_length < 0),]
+
+# Calculate the average distance for both the casual and member type users
+member_casual_mean <- tripdata_clean %>%
+  group_by(member_casual) %>%
+  summarise(mean_time = mean(ride_length), mean_distance = mean(ride_distance))
+## Build a table with the results
+View(member_casual_mean)
+
+# Build a plot of mean travel time by user type
+member_casual_mean_time <- ggplot(member_casual_mean) + 
+  geom_col(mapping = aes(x = member_casual, y = mean_time, fill = member_casual), show.legend = TRUE) +
+  labs(title = "Mean travel time by user type: Member / Casual", x = "User type", y = "Mean time in sec", caption = "Data by Citi Bike. Plot by Vlad Dorokhin")
+## Build a graph with the results
+print(member_casual_mean_time)
+
+# Build a plot of mean travel distance by user type
+member_casual_mean_distance <- ggplot(userType_means) + 
+  geom_col(mapping = aes(x = member_casual, y = mean_distance, fill = member_casual), show.legend = TRUE) +
+  labs(title = "Mean travel distance by user type: Member / Casual", x = "User type", y = "Mean distance in km", caption = "Data by Citi Bike. Plot by Vlad Dorokhin")
+## Build a graph with the results
+print(member_casual_mean_distance)
+
+# Combine two recent plots (mean travel time and mean travel distance) together
+grid.arrange(member_casual_mean_time, member_casual_mean_distance, ncol = 2)
