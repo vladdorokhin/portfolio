@@ -1,4 +1,4 @@
-# The code is a part of Vlad Dorokhin's portfolio research project: Citi Bike Bike-Share Analysis (03/2021-03/2022)
+# The code below is a part of Vlad Dorokhin's portfolio research project: Citi Bike Bike-Share Analysis (03/2021-03/2022)
 # More information and additional files can be found here: https://github.com/vladdorokhin/portfolio/tree/main/20220415_citi_bike_project_01
 
 # Install and load the project-related packages
@@ -116,3 +116,93 @@ print(member_casual_mean_distance)
 
 # Combine two recent plots (mean travel time and mean travel distance) together
 grid.arrange(member_casual_mean_time, member_casual_mean_distance, ncol = 2)
+
+# Check the number of ride differences by weekday:
+tripdata_clean %>% 
+  mutate(weekday = wday(started_at, label = TRUE)) %>% 
+  group_by(member_casual, weekday) %>% 
+  summarise(number_of_rides = n(), average_duration = mean(ride_length), .groups = 'drop') %>% 
+  arrange(member_casual, weekday)  %>% 
+  ggplot(aes(x = weekday, y = number_of_rides, fill = member_casual)) +
+  geom_col(position = "dodge") +
+  labs(title = "Number of rides by user type during the week", x = "Days of the week", y = "Number of rides", caption = "Data by Citi Bike. Plot by Vlad Dorokhin", fill = "User type") +
+  theme(legend.position = "top")
+
+# Create a new data set with only classic bikes and electric bikes in the rideable_type field
+tripdata_clean_classic_electric <- tripdata_clean %>%
+  filter(rideable_type == "classic_bike" | rideable_type == "electric_bike")
+
+# Check the bike type usage by user type
+tripdata_clean_classic_electric %>%
+  group_by(member_casual, rideable_type) %>%
+  summarise(totals=n(), .groups="drop")  %>%
+  ggplot() +
+  geom_col(aes(x = member_casual, y = totals, fill = rideable_type), position = "dodge") + 
+  labs(title = "Bike type usage by user type: Classic Bike / Electric Bike", x = "User type", y = NULL, fill = "Bike type", caption = "Data by Citi Bike. Plot by Vlad Dorokhin") +
+  scale_fill_manual(values = c("classic_bike" = "#ffa600", "electric_bike" = "#bc5090")) +
+  theme_minimal() +
+  theme(legend.position = "top")
+
+# Check the bike usage by both user types during a week
+tripdata_clean_classic_electric %>%
+  mutate(weekday = wday(started_at, label = TRUE)) %>% 
+  group_by(member_casual, rideable_type, weekday) %>%
+  summarise(totals=n(), .groups="drop") %>%
+  ggplot(aes(x = weekday, y = totals, fill = rideable_type)) +
+  geom_col(position = "dodge") + 
+  facet_wrap(~member_casual) +
+  labs(title = "Bike type usage by user type during a week", x = "User type", y = NULL, caption = "Data by Citi Bike. Plot by Vlad Dorokhin") +
+  scale_fill_manual(values = c("classic_bike" = "#ffa600", "electric_bike" = "#bc5090")) +
+  theme_minimal() +
+  theme(legend.position="none")
+
+# Check the coordinates data of the rides
+## Create a table only for the most popular routes (>500 times)
+tripdata_coordinates <- tripdata_clean %>% 
+  filter(start_lng != end_lng & start_lat != end_lat) %>%
+  group_by(start_lng, start_lat, end_lng, end_lat, member_casual, rideable_type) %>%
+  summarise(total = n(), .groups="drop") %>%
+  filter(total > 500)
+
+# Check the coordinates data of the rides
+## Create a table only for the most popular routes (>500 times)
+tripdata_coordinates <- tripdata_clean %>% 
+  filter(start_lng != end_lng & start_lat != end_lat) %>%
+  group_by(start_lng, start_lat, end_lng, end_lat, member_casual, rideable_type) %>%
+  summarise(total = n(), .groups="drop") %>%
+  filter(total > 500)
+## Create 2 sub-tables for each user type
+casual <- tripdata_coordinates %>% filter(member_casual == "casual")
+member <- tripdata_coordinates %>% filter(member_casual == "member")
+
+# Store bounding box coordinates for ggmap:
+nyc_bounding_box <- c(
+  left = -74.15,
+  bottom = 40.5774,
+  right = -73.7004,
+  top = 40.9176
+)
+
+# Store the stamen map of NYC
+nyc_stamen_map <- get_stamenmap(
+  bbox = nyc_bounding_box,
+  zoom = 12,
+  maptype = "toner"
+)
+
+# Plot the data by casual users on the map
+ggmap(nyc_stamen_map, darken = c(0.8, "white")) +
+  geom_curve(casual, mapping = aes(x = start_lng, y = start_lat, xend = end_lng, yend = end_lat, alpha = total, color = rideable_type), size = 0.5, curvature = .2, arrow = arrow(length = unit(0.2, "cm"), ends = "first", type = "closed")) +
+  coord_cartesian() +
+  labs(title = "Most popular routes by casual users", x = NULL, y = NULL, color = "User type", caption = "Data by Citi Bike. Plot by Vlad Dorokhin") +
+  theme(legend.position="right")
+
+# Plot the data by annual members on the map
+ggmap(nyc_stamen_map, darken = c(0.8, "white")) +
+  geom_curve(member, mapping = aes(x = start_lng, y = start_lat, xend = end_lng, yend = end_lat, alpha = total, color = rideable_type), size = 0.5, curvature = .2, arrow = arrow(length = unit(0.2,"cm"), ends="first", type = "closed")) +  
+  coord_cartesian() +
+  labs(title = "Most popular routes by annual members", x = NULL,y = NULL, caption = "Data by Citi Bike. Plot by Vlad Dorokhin") +
+  theme(legend.position="right")
+
+# The code above is a part of Vlad Dorokhin's portfolio research project: Citi Bike Bike-Share Analysis (03/2021-03/2022)
+# More information and additional files can be found here: https://github.com/vladdorokhin/portfolio/tree/main/20220415_citi_bike_project_01
