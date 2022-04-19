@@ -1,3 +1,6 @@
+# The code is a part of Vlad Dorokhin's portfolio research project: Citi Bike Bike-Share Analysis (03/2021-03/2022)
+# More information and additional files can be found here: https://github.com/vladdorokhin/portfolio/tree/main/20220415_citi_bike_project_01
+
 # Install and load the project-related packages
 library(tidyverse)
 library(janitor)
@@ -77,3 +80,15 @@ tripdata_clean$day <- format(as.Date(tripdata_clean$date), "%d")
 tripdata_clean$year <- format(as.Date(tripdata_clean$date), "%Y")
 ## Separate the dates into day of a week
 tripdata_clean$day_of_week <- format(as.Date(tripdata_clean$date), "%A")
+
+# Create new columns
+## Duration of the ride length in seconds
+tripdata_clean$ride_length <- difftime(tripdata_clean$ended_at, tripdata_clean$started_at)
+## Ride distance traveled in km
+tripdata_clean$ride_distance <- distGeo(matrix(c(tripdata_clean$start_lng, tripdata_clean$start_lat), ncol = 2), matrix(c(tripdata_clean$end_lng, tripdata_clean$end_lat), ncol = 2))
+tripdata_clean$ride_distance <- tripdata_clean$ride_distance/1000
+## Ride peed in km/h
+tripdata_clean$ride_speed = c(tripdata_clean$ride_distance) / as.numeric(c(tripdata_clean$ride_length), units="hours")
+
+# Double-check there will be no values when bikes were taken out of docks and checked for quality by Citi Bike employees or when ride_length was negative:
+tripdata_clean <- tripdata_clean[!(tripdata_clean$start_station_name == "HQ QR" | tripdata_clean$ride_length < 0),]
