@@ -45,10 +45,13 @@ View(tripdata)
 
 # Check the merged data set
 ## See a list of column names
+print("A list of column names:")
 colnames(tripdata)
-## See first 6 rows
+## See the first 6 rows
+print("The first 6 rows:")
 head(tripdata)
-## See a list of columns and data types (numeric, character, etc)
+## See a list of columns and data types (numeric, character, etc.)
+print("A list of columns and data types (numeric, character, etc.):")
 str(tripdata)
 ## Glimpse of data
 print("Glimpse:")
@@ -56,3 +59,21 @@ glimpse(tripdata)
 ## Statistical summary of data
 print("Summary:")
 summary(tripdata)
+
+# Clean the tripdata database to be able to properly work with it:
+## Drop all NA (null = empty values):
+tripdata_clean <- drop_na(tripdata)
+## View the merged clean database in a table form
+View(tripdata_clean)
+
+# Create new columns
+## Change the format of the date row to an appropriate one for calculations
+tripdata_clean$date <- as.Date(tripdata_clean$started_at) 
+## Separate the dates into month
+tripdata_clean$month <- format(as.Date(tripdata_clean$date), "%m")
+## Separate the dates into day
+tripdata_clean$day <- format(as.Date(tripdata_clean$date), "%d")
+## Separate the dates into year
+tripdata_clean$year <- format(as.Date(tripdata_clean$date), "%Y")
+## Separate the dates into day of a week
+tripdata_clean$day_of_week <- format(as.Date(tripdata_clean$date), "%A")
