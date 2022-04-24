@@ -219,28 +219,28 @@ nyc_stamen_map <- get_stamenmap(
 ggmap(nyc_stamen_map, darken = c(0.8, "white")) +
   geom_curve(casual_1000, mapping = aes(x = start_lng, y = start_lat, xend = end_lng, yend = end_lat, alpha = total, color = rideable_type), size = 0.5, curvature = .2, arrow = arrow(length = unit(0.2, "cm"), ends = "first", type = "closed")) +
   coord_cartesian() +
-  labs(title = "Most popular routes by casual users", x = NULL, y = NULL, color = "User type", caption = "Data by Citi Bike. Plot by Vlad Dorokhin") +
+  labs(title = "Most popular routes by casual users (for routes used > 1000 times)", x = NULL, y = NULL, color = "User type", caption = "Data by Citi Bike. Plot by Vlad Dorokhin") +
   theme(legend.position="right")
 
 # Plot of the data by casual users on the map (for routes used > 500 times)
 ggmap(nyc_stamen_map, darken = c(0.8, "white")) +
   geom_curve(casual_500, mapping = aes(x = start_lng, y = start_lat, xend = end_lng, yend = end_lat, alpha = total, color = rideable_type), size = 0.5, curvature = .2, arrow = arrow(length = unit(0.2, "cm"), ends = "first", type = "closed")) +
   coord_cartesian() +
-  labs(title = "Most popular routes by casual users", x = NULL, y = NULL, color = "User type", caption = "Data by Citi Bike. Plot by Vlad Dorokhin") +
+  labs(title = "Most popular routes by casual users (for routes used > 500 times)", x = NULL, y = NULL, color = "User type", caption = "Data by Citi Bike. Plot by Vlad Dorokhin") +
   theme(legend.position="right")
 
 # Plot of the data by annual members on the map (for routes used > 1000 times)
 ggmap(nyc_stamen_map, darken = c(0.8, "white")) +
   geom_curve(member_1000, mapping = aes(x = start_lng, y = start_lat, xend = end_lng, yend = end_lat, alpha = total, color = rideable_type), size = 0.5, curvature = .2, arrow = arrow(length = unit(0.2,"cm"), ends="first", type = "closed")) +  
   coord_cartesian() +
-  labs(title = "Most popular routes by annual members", x = NULL,y = NULL, caption = "Data by Citi Bike. Plot by Vlad Dorokhin") +
+  labs(title = "Most popular routes by annual members (for routes used > 1000 times)", x = NULL,y = NULL, caption = "Data by Citi Bike. Plot by Vlad Dorokhin") +
   theme(legend.position="right")
 
 # Plot of the data by annual members on the map (for routes used > 500 times)
 ggmap(nyc_stamen_map, darken = c(0.8, "white")) +
   geom_curve(member_500, mapping = aes(x = start_lng, y = start_lat, xend = end_lng, yend = end_lat, alpha = total, color = rideable_type), size = 0.5, curvature = .2, arrow = arrow(length = unit(0.2,"cm"), ends="first", type = "closed")) +  
   coord_cartesian() +
-  labs(title = "Most popular routes by annual members", x = NULL,y = NULL, caption = "Data by Citi Bike. Plot by Vlad Dorokhin") +
+  labs(title = "Most popular routes by annual members (for routes used > 500 times)", x = NULL,y = NULL, caption = "Data by Citi Bike. Plot by Vlad Dorokhin") +
   theme(legend.position="right")
 
 # The code above is a part of Vlad Dorokhin's portfolio research project: Citi Bike Bike-Share Analysis (03/2021-03/2022)
