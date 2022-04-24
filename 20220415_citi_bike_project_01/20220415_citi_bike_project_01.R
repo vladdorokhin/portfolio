@@ -114,7 +114,15 @@ print(member_casual_mean_distance)
 # Combine two recent plots (mean travel time and mean travel distance) together
 grid.arrange(member_casual_mean_time, member_casual_mean_distance, ncol = 2)
 
-# Check the number of ride differences by weekday:
+# Check the number of rides by user type during a week
+## Build a tibble of the data
+member_casual_rides_week <- tripdata_clean %>% 
+    mutate(weekday = wday(started_at, label = TRUE)) %>% 
+    group_by(member_casual, weekday) %>% 
+    summarise(number_of_rides = n(), average_duration = mean(ride_length), .groups = 'drop') %>% 
+    arrange(member_casual, weekday)
+print(member_casual_rides_week)
+## Build a plot of the data
 tripdata_clean %>% 
   mutate(weekday = wday(started_at, label = TRUE)) %>% 
   group_by(member_casual, weekday) %>% 
