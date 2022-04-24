@@ -138,6 +138,12 @@ tripdata_clean_classic_electric <- tripdata_clean %>%
   filter(rideable_type == "classic_bike" | rideable_type == "electric_bike")
 
 # Check the bike type usage by user type
+## Build a tibble of the data
+member_casual_classic_electric <- tripdata_clean_classic_electric %>%
+  group_by(member_casual, rideable_type) %>%
+  summarise(totals=n(), .groups="drop")
+print(member_casual_classic_electric)
+## Build a plot of the data
 tripdata_clean_classic_electric %>%
   group_by(member_casual, rideable_type) %>%
   summarise(totals=n(), .groups="drop")  %>%
@@ -148,7 +154,14 @@ tripdata_clean_classic_electric %>%
   theme_minimal() +
   theme(legend.position = "top")
 
-# Check the bike usage by both user types during a week
+# Check the bike types usage by both user types during a week
+## Build a tibble of the data
+member_casual_classic_electric_week <- tripdata_clean_classic_electric %>%
+  mutate(weekday = wday(started_at, label = TRUE)) %>% 
+  group_by(member_casual, rideable_type, weekday) %>%
+  summarise(totals=n(), .groups="drop")
+print(member_casual_classic_electric_week)
+## Build a plot of the data
 tripdata_clean_classic_electric %>%
   mutate(weekday = wday(started_at, label = TRUE)) %>% 
   group_by(member_casual, rideable_type, weekday) %>%
@@ -159,7 +172,7 @@ tripdata_clean_classic_electric %>%
   labs(title = "Bike type usage by user type during a week", x = "User type", y = NULL, caption = "Data by Citi Bike. Plot by Vlad Dorokhin") +
   scale_fill_manual(values = c("classic_bike" = "#ffa600", "electric_bike" = "#bc5090")) +
   theme_minimal() +
-  theme(legend.position="none")
+  theme(legend.position="top")
 
 # Check the coordinates data of the rides
 ## Create a table only for the most popular routes (>500 times)
