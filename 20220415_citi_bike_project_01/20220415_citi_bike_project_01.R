@@ -175,23 +175,30 @@ tripdata_clean_classic_electric %>%
   theme(legend.position="top")
 
 # Check the coordinates data of the rides
-## Create a table only for the most popular routes (>500 times)
-tripdata_coordinates <- tripdata_clean %>% 
+## Create a table only for the top 1 most popular routes (used > 1000 times)
+tripdata_coordinates_1000 <- tripdata_clean %>% 
+  filter(start_lng != end_lng & start_lat != end_lat) %>%
+  group_by(start_lng, start_lat, end_lng, end_lat, member_casual, rideable_type) %>%
+  summarise(total = n(), .groups="drop") %>%
+  filter(total > 1000)
+print(tripdata_coordinates_1000)
+## Create 2 sub-tables for each user type for the top 1 most popular routes (used > 1000 times)
+casual_1000 <- tripdata_coordinates_1000 %>% filter(member_casual == "casual")
+member_1000 <- tripdata_coordinates_1000 %>% filter(member_casual == "member")
+print(casual_1000)
+print(member_1000)
+## Create a table only for the top 2 most popular routes (used > 500 times)
+tripdata_coordinates_500 <- tripdata_clean %>% 
   filter(start_lng != end_lng & start_lat != end_lat) %>%
   group_by(start_lng, start_lat, end_lng, end_lat, member_casual, rideable_type) %>%
   summarise(total = n(), .groups="drop") %>%
   filter(total > 500)
-
-# Check the coordinates data of the rides
-## Create a table only for the most popular routes (>500 times)
-tripdata_coordinates <- tripdata_clean %>% 
-  filter(start_lng != end_lng & start_lat != end_lat) %>%
-  group_by(start_lng, start_lat, end_lng, end_lat, member_casual, rideable_type) %>%
-  summarise(total = n(), .groups="drop") %>%
-  filter(total > 500)
-## Create 2 sub-tables for each user type
-casual <- tripdata_coordinates %>% filter(member_casual == "casual")
-member <- tripdata_coordinates %>% filter(member_casual == "member")
+print(tripdata_coordinates_500)
+## Create 2 sub-tables for each user type for the top 2 most popular routes (used > 500 times)
+casual_500 <- tripdata_coordinates_500 %>% filter(member_casual == "casual")
+member_500 <- tripdata_coordinates_500 %>% filter(member_casual == "member")
+print(casual_500)
+print(member_500)
 
 # Store bounding box coordinates for ggmap:
 nyc_bounding_box <- c(
@@ -208,16 +215,30 @@ nyc_stamen_map <- get_stamenmap(
   maptype = "toner"
 )
 
-# Plot the data by casual users on the map
+# Plot of the data by casual users on the map (for routes used > 1000 times)
 ggmap(nyc_stamen_map, darken = c(0.8, "white")) +
-  geom_curve(casual, mapping = aes(x = start_lng, y = start_lat, xend = end_lng, yend = end_lat, alpha = total, color = rideable_type), size = 0.5, curvature = .2, arrow = arrow(length = unit(0.2, "cm"), ends = "first", type = "closed")) +
+  geom_curve(casual_1000, mapping = aes(x = start_lng, y = start_lat, xend = end_lng, yend = end_lat, alpha = total, color = rideable_type), size = 0.5, curvature = .2, arrow = arrow(length = unit(0.2, "cm"), ends = "first", type = "closed")) +
   coord_cartesian() +
   labs(title = "Most popular routes by casual users", x = NULL, y = NULL, color = "User type", caption = "Data by Citi Bike. Plot by Vlad Dorokhin") +
   theme(legend.position="right")
 
-# Plot the data by annual members on the map
+# Plot of the data by casual users on the map (for routes used > 500 times)
 ggmap(nyc_stamen_map, darken = c(0.8, "white")) +
-  geom_curve(member, mapping = aes(x = start_lng, y = start_lat, xend = end_lng, yend = end_lat, alpha = total, color = rideable_type), size = 0.5, curvature = .2, arrow = arrow(length = unit(0.2,"cm"), ends="first", type = "closed")) +  
+  geom_curve(casual_500, mapping = aes(x = start_lng, y = start_lat, xend = end_lng, yend = end_lat, alpha = total, color = rideable_type), size = 0.5, curvature = .2, arrow = arrow(length = unit(0.2, "cm"), ends = "first", type = "closed")) +
+  coord_cartesian() +
+  labs(title = "Most popular routes by casual users", x = NULL, y = NULL, color = "User type", caption = "Data by Citi Bike. Plot by Vlad Dorokhin") +
+  theme(legend.position="right")
+
+# Plot of the data by annual members on the map (for routes used > 1000 times)
+ggmap(nyc_stamen_map, darken = c(0.8, "white")) +
+  geom_curve(member_1000, mapping = aes(x = start_lng, y = start_lat, xend = end_lng, yend = end_lat, alpha = total, color = rideable_type), size = 0.5, curvature = .2, arrow = arrow(length = unit(0.2,"cm"), ends="first", type = "closed")) +  
+  coord_cartesian() +
+  labs(title = "Most popular routes by annual members", x = NULL,y = NULL, caption = "Data by Citi Bike. Plot by Vlad Dorokhin") +
+  theme(legend.position="right")
+
+# Plot of the data by annual members on the map (for routes used > 500 times)
+ggmap(nyc_stamen_map, darken = c(0.8, "white")) +
+  geom_curve(member_500, mapping = aes(x = start_lng, y = start_lat, xend = end_lng, yend = end_lat, alpha = total, color = rideable_type), size = 0.5, curvature = .2, arrow = arrow(length = unit(0.2,"cm"), ends="first", type = "closed")) +  
   coord_cartesian() +
   labs(title = "Most popular routes by annual members", x = NULL,y = NULL, caption = "Data by Citi Bike. Plot by Vlad Dorokhin") +
   theme(legend.position="right")
