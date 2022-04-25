@@ -244,7 +244,9 @@ ggmap(nyc_stamen_map, darken = c(0.8, "white")) +
   theme(legend.position="right")
 
 # The code above is a part of Vlad Dorokhin's portfolio research project: Citi Bike Bike-Share Analysis (03/2021-03/2022)
-# More information and additional files can be found here: https://github.com/vladdorokhin/portfolio/tree/main/20220415_citi_bike_project_01
+# Vlad Dorokhin's page on LinkedIn: https://www.linkedin.com/in/vladdorokhin/
+# More information and additional files can be found here (GitHub): https://github.com/vladdorokhin/portfolio/tree/main/20220415_citi_bike_project_01
+# Alternative repository with more information and additional files (GitLab): https://gitlab.com/vladdorokhin/portfolio/-/tree/main/20220415_citi_bike_project_01#modal-upload-blob
 
 # Copyright (C) [2022] [Vlad Dorokhin]
 # This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.
